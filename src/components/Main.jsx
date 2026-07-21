@@ -1,6 +1,7 @@
 import { IoSearch } from "react-icons/io5";
 import { CiBookmark } from "react-icons/ci";
 import { FaPlay } from "react-icons/fa";
+import { MdOutlineClear } from "react-icons/md";
 import { useState, useEffect } from "react";
 import DictionaryWord from "./DictionaryWord";
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -63,6 +64,13 @@ function Main() {
         e.preventDefault();
         if (!input.trim()) return
         setWord(input)
+
+        setRecentSearch((prev) => {
+            const filtered = prev.filter((item) => {
+                return item.toLowerCase() !== input.toLocaleLowerCase()
+            })
+            return [input, ...filtered].slice(0, 5)
+        })
     }
 
     function handleSound() {
@@ -74,6 +82,11 @@ function Main() {
 
         const audio = new Audio(audioUrl)
         audio.play()
+    }
+
+    function clearRecentSearches() {
+        setRecentSearch([]);
+        localStorage.setItem("recentSearch", JSON.stringify([]));
     }
     return (
         <div className="form-box">
@@ -99,10 +112,40 @@ function Main() {
                 </button>
             </form>
 
+
+
+
             <div className="word-container">
                 {loading && (<LoadingSkeleton />)}
 
                 {error && <ErrorMessage error={error} word={word} />}
+
+                {recentSearch.length > 0 && (
+                    <div className="recent-search">
+                        <div className="recent">
+                            <span>Recent</span>
+
+                            {recentSearch.map((word) => (
+                                <button
+                                    key={word}
+                                    onClick={() => {
+                                        setInput(word);
+                                        setWord(word);
+                                    }}
+                                >
+                                    {word}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            className="cancel"
+                            onClick={clearRecentSearches}
+                        >
+                            <MdOutlineClear />
+                        </button>
+                    </div>
+                )}
 
                 {result && (
                     <>
@@ -120,7 +163,10 @@ function Main() {
                                 <button className="word-btn play" onClick={handleSound}> <FaPlay /> </button>
                             </div>
                         </header>
-                        <DictionaryWord result={result} />
+                        <DictionaryWord result={result} searchWord={(word) => {
+                            setInput(word)
+                            setWord(word)
+                        }} />
                     </>
                 )}
             </div>

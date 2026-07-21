@@ -1,4 +1,4 @@
-export default function DictionaryWord({ result }) {
+export default function DictionaryWord({ result, searchWord }) {
     const allMeanings = result.map((word, index) => {
         return (
             word.meanings.map((meaning, index) => {
@@ -38,7 +38,7 @@ export default function DictionaryWord({ result }) {
                                     <div className="syno-cover">
                                         {meaning.synonyms.map((synom, index) => {
                                             return (
-                                                <button key={index} className="syno-word" type="button">
+                                                <button key={index} className="syno-word" type="button" onClick={() => searchWord(synom)}>
                                                     {synom}
                                                 </button>
                                             )
@@ -55,7 +55,7 @@ export default function DictionaryWord({ result }) {
                                 <div className="syno-cover">
                                     {meaning.antonyms.map((anton, index) => {
                                         return (
-                                            <button key={index} className="anto-word" type="button">
+                                            <button key={index} className="anto-word" type="button" onClick={() => searchWord(anton)}>
                                                 {anton}
                                             </button>
                                         )
