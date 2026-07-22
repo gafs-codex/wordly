@@ -2,12 +2,12 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { IoBookOutline } from "react-icons/io5";
 import { MdOutlineLightMode } from "react-icons/md";
+import { MdOutlineDarkMode } from "react-icons/md";
 import { CiBookmark } from "react-icons/ci";
-function Navbar() {
+function Navbar({ darkMode, toggleTheme }) {
+    // const [theme, setTheme] = useState(true)
     const location = useLocation()
-    const savedStyle = {
 
-    }
     return (
         <nav>
             <div className="logo">
@@ -26,8 +26,8 @@ function Navbar() {
                         </NavLink>
                     )
                 }
-                <button className="bg-mode">
-                    <MdOutlineLightMode />
+                <button className="bg-mode" onClick={toggleTheme}>
+                    {darkMode ? <MdOutlineLightMode /> : <MdOutlineDarkMode />}
                 </button>
             </div>
         </nav>

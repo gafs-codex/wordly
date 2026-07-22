@@ -1,9 +1,9 @@
 import Navbar from "../components/Navbar";
 import Main from "../components/Main";
-function HomePage() {
+function HomePage({ savedWords, toggleSave }) {
     return (
         <div className="">
-            <Main />
+            <Main savedWords={savedWords} toggleSave={toggleSave} />
         </div>
     )
 }

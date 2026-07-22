@@ -1,14 +1,17 @@
 import { IoSearch } from "react-icons/io5";
 import { CiBookmark } from "react-icons/ci";
+import { BiSolidBookmark } from "react-icons/bi"
 import { FaPlay } from "react-icons/fa";
 import { MdOutlineClear } from "react-icons/md";
 import { useState, useEffect } from "react";
 import DictionaryWord from "./DictionaryWord";
 import LoadingSkeleton from "./LoadingSkeleton";
 import ErrorMessage from "./ErrorMessage";
+import { useLocation } from "react-router-dom";
 
 
-function Main() {
+function Main({ savedWords, toggleSave }) {
+    const location = useLocation()
     const [input, setInput] = useState("")
     const [word, setWord] = useState("")
     const [result, setResult] = useState(null)
@@ -21,6 +24,10 @@ function Main() {
     }
     )
 
+
+
+
+    const isSaved = result ? savedWords.some(sword => sword.word === result[0].word) : false
     useEffect(() => {
         if (!word) return
         setLoading(true)
@@ -39,7 +46,17 @@ function Main() {
             .then(data => {
                 setResult(data);
                 setError(null);
+
+                setRecentSearch((prev) => {
+                    const filtered = prev.filter((item) => {
+                        return item.toLowerCase() !== data[0].word.toLocaleLowerCase()
+                    })
+                    return [data[0].word, ...filtered].slice(0, 7)
+                })
+
                 setLoading(false);
+
+
             })
             .catch(error => {
                 if (error.message === "Word not found") {
@@ -59,18 +76,24 @@ function Main() {
         localStorage.setItem("recentSearches", JSON.stringify(recentSearch))
     }, [recentSearch])
 
+    useEffect(() => {
+        if (location.state?.searchWord) {
+            searchWord(location.state.searchWord);
+        }
+    }, [location.state])
+    function searchWord(searchWord) {
+        const trimWord = searchWord.trim()
+
+        if (!trimWord) return
+
+        setInput(trimWord)
+        setWord(trimWord)
+    }
 
     function handleSubmit(e) {
         e.preventDefault();
         if (!input.trim()) return
-        setWord(input)
-
-        setRecentSearch((prev) => {
-            const filtered = prev.filter((item) => {
-                return item.toLowerCase() !== input.toLocaleLowerCase()
-            })
-            return [input, ...filtered].slice(0, 5)
-        })
+        searchWord(input)
     }
 
     function handleSound() {
@@ -86,7 +109,7 @@ function Main() {
 
     function clearRecentSearches() {
         setRecentSearch([]);
-        localStorage.setItem("recentSearch", JSON.stringify([]));
+        localStorage.setItem("recentSearches", JSON.stringify([]));
     }
     return (
         <div className="form-box">
@@ -116,57 +139,57 @@ function Main() {
 
 
             <div className="word-container">
-                {loading && (<LoadingSkeleton />)}
-
-                {error && <ErrorMessage error={error} word={word} />}
-
-                {recentSearch.length > 0 && (
-                    <div className="recent-search">
-                        <div className="recent">
-                            <span>Recent</span>
-
-                            {recentSearch.map((word) => (
-                                <button
-                                    key={word}
-                                    onClick={() => {
-                                        setInput(word);
-                                        setWord(word);
-                                    }}
-                                >
-                                    {word}
-                                </button>
-                            ))}
-                        </div>
-
-                        <button
-                            className="cancel"
-                            onClick={clearRecentSearches}
-                        >
-                            <MdOutlineClear />
-                        </button>
-                    </div>
-                )}
-
-                {result && (
+                {/* {loading && (<LoadingSkeleton />)} */}
+                {loading ? <LoadingSkeleton /> : (
                     <>
-                        <header className="word-cover">
-                            <div className="word-header">
-                                <h2>{result[0].word}</h2>
-                                <p> {result[0].phonetic
-                                    ? result[0].phonetic
-                                    : result[0].phonetics && result[0].phonetics[0]
-                                        ? result[0].phonetics[0].text
-                                        : "No phonetic available"} </p>
+                        {recentSearch.length > 0 && (
+                            <div className="recent-search">
+                                <div className="recent">
+                                    <span>Recent</span>
+
+                                    {recentSearch.map((word) => (
+                                        <button
+                                            key={word}
+                                            onClick={() => searchWord(word)}
+                                        >
+                                            {word}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className="cancel"
+                                    onClick={clearRecentSearches}
+                                >
+                                    <MdOutlineClear />
+                                </button>
                             </div>
-                            <div className="button-container">
-                                <button className="word-btn save" type="button" aria-label="save word" aria-pressed="false"> <CiBookmark height={30} width={30} /> </button>
-                                <button className="word-btn play" onClick={handleSound}> <FaPlay /> </button>
-                            </div>
-                        </header>
-                        <DictionaryWord result={result} searchWord={(word) => {
-                            setInput(word)
-                            setWord(word)
-                        }} />
+                        )}
+
+
+                        {error && <ErrorMessage error={error} word={word} />}
+
+
+                        {result && (
+                            <>
+                                <header className="word-cover">
+                                    <div className="word-header">
+                                        <h2>{result[0].word}</h2>
+                                        <p> {result[0].phonetic
+                                            ? result[0].phonetic
+                                            : result[0].phonetics && result[0].phonetics[0]
+                                                ? result[0].phonetics[0].text
+                                                : "No phonetic available"} </p>
+                                    </div>
+                                    <div className="button-container">
+                                        <button className="word-btn save" type="button" aria-label="save word" aria-pressed="false" onClick={() => toggleSave(result[0])}> {isSaved ? <BiSolidBookmark height={30} width={30} /> : <CiBookmark height={30} width={30} />}
+                                        </button>
+                                        <button className="word-btn play" onClick={handleSound}> <FaPlay /> </button>
+                                    </div>
+                                </header>
+                                <DictionaryWord result={result} searchWord={searchWord} />
+                            </>
+                        )}
                     </>
                 )}
             </div>

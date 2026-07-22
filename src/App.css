@@ -11,6 +11,16 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+body.dark {
+  background-color: #020618;
+  color: white;
+}
+
+body.light {
+  background: #FFF;
+  color: #020618;
+}
+
 nav {
   /* border: 2px solid red; */
   border-bottom: 1px solid #242838;
@@ -76,6 +86,9 @@ nav .mode {
   justify-content: center;
   align-items: center;
   font-size: 20px;
+  cursor: pointer;
+  background: inherit;
+  color: white;
 }
 
 /* MEDIA-QUERY FOR NAVBAR */
@@ -602,6 +615,7 @@ nav .mode {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 1.25rem;
 }
 
 .recent-search span {
@@ -633,4 +647,49 @@ button.cancel {
   padding: 0;
   padding-top: 0.2rem;
   background: none;
+}
+
+.saved-item {
+  border: none;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.08);
+  width: 100%;
+  padding: 0.75rem;
+  background: #0F172B;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.saved-item p {
+  font-size: 0.9rem;
+  color: #90A1B9;
+  margin-top: 0.5rem;
+  width: 80%;
+}
+
+.saved-item button {
+  border: none;
+  background: none;
+  color: red;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.saved-item button:hover {
+  background: #281f31;
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 70%;
 }
