@@ -18,12 +18,20 @@ function Navbar({ darkMode, toggleTheme }) {
             <div className="mode">
                 {location.pathname !== "/saved" &&
                     (
-                        <NavLink className="link" to="/saved">
-                            <button className="save-btn" >
-                                <CiBookmark className="bookmark" />
-                                saved
-                            </button>
-                        </NavLink>
+                        <>
+                            <NavLink className="link" to="/saved">
+                                <button className="save-btn" >
+                                    <CiBookmark className="bookmark" />
+                                    saved
+                                </button>
+                            </NavLink>
+
+                            <NavLink className="link" to="/saved">
+                                <button className="save-btn-sm" >
+                                    <CiBookmark className="bookmark" />
+                                </button>
+                            </NavLink>
+                        </>
                     )
                 }
                 <button className="bg-mode" onClick={toggleTheme}>
