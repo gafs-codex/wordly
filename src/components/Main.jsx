@@ -25,8 +25,6 @@ function Main({ savedWords, toggleSave }) {
     )
 
 
-
-
     const isSaved = result ? savedWords.some(sword => sword.word === result[0].word) : false
     useEffect(() => {
         if (!word) return
